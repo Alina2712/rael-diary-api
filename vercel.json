@@ -1,8 +1,20 @@
 {
   "version": 2,
   "routes": [
-    { "src": "/api/add", "dest": "add.js" },
-    { "src": "/api/list", "dest": "list.js" },
-    { "src": "/api/get", "dest": "get.js" }
+    {
+      "src": "/api/add",
+      "methods": ["POST"],
+      "dest": "add.js"
+    },
+    {
+      "src": "/api/list",
+      "methods": ["GET"],
+      "dest": "list.js"
+    },
+    {
+      "src": "/api/get",
+      "methods": ["GET"],
+      "dest": "get.js"
+    }
   ]
 }
