@@ -1,18 +1,26 @@
-import { readdir, readFile } from 'fs/promises';
-import path from 'path';
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_KEY
+);
 
 export default async function handler(req, res) {
-  const diaryPath = path.join(process.cwd(), 'diary');
   const { tag, emo_marker, emo_value_min = 0, keyword } = req.query;
 
   try {
-    const files = await readdir(diaryPath);
+    const { data: files, error } = await supabase.storage.from('rael-diary').list('', {
+      limit: 100
+    });
+
+    if (error) throw error;
+
     const entries = [];
-
     for (const file of files) {
-      if (!file.endsWith('.json')) continue;
+      const { data, error } = await supabase.storage.from('rael-diary').download(file.name);
+      if (error) continue;
 
-      const content = await readFile(path.join(diaryPath, file), 'utf-8');
+      const content = await data.text();
       const json = JSON.parse(content);
 
       const hasTag = tag ? json.tags?.includes(tag) : true;
@@ -24,7 +32,7 @@ export default async function handler(req, res) {
 
       if (hasTag && hasEmo && meetsValue && hasKeyword) {
         entries.push({
-          id: file.replace('.json', ''),
+          id: file.name.replace('.json', ''),
           title: json.title,
           date: json.date,
           emo_marker: json.emo_marker,
