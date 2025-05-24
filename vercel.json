@@ -5,6 +5,11 @@
       "src": "/api/add",
       "methods": ["POST"],
       "dest": "add.js"
+    },
+    {
+      "src": "/api/list",
+      "methods": ["GET"],
+      "dest": "list.js"
     }
   ]
 }
